@@ -1,0 +1,129 @@
+:root {
+  --bg: #0b1220;
+  --panel: #101a33;
+  --text: #e7ecff;
+  --muted: #9aa7d6;
+  --user: #2a6cff;
+  --bot: #2b3556;
+  --border: #223058;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+  background: radial-gradient(
+    1200px 600px at 20% 0%,
+    #162a5b 0%,
+    var(--bg) 55%
+  );
+  color: var(--text);
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.app {
+  width: min(900px, 100%);
+  background: color-mix(in oklab, var(--panel) 90%, black);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+}
+
+.header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+}
+
+.chat {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: min(70vh, 640px);
+}
+
+.messages {
+  list-style: none;
+  margin: 0;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.message {
+  max-width: 75%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  line-height: 1.35;
+  font-size: 14px;
+}
+
+.message--bot {
+  background: var(--bot);
+  align-self: flex-start;
+  border: 1px solid color-mix(in oklab, var(--bot) 70%, white);
+}
+
+.message--user {
+  background: var(--user);
+  align-self: flex-end;
+}
+
+.composer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 14px;
+  border-top: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel) 92%, black);
+}
+
+.composer__input {
+  border: 1px solid var(--border);
+  background: #0e1630;
+  color: var(--text);
+  padding: 12px 12px;
+  border-radius: 12px;
+  outline: none;
+}
+
+.composer__input::placeholder {
+  color: var(--muted);
+}
+
+.composer__input:focus {
+  border-color: color-mix(in oklab, var(--user) 60%, white);
+}
+
+.composer__button {
+  border: 0;
+  background: var(--user);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.composer__button:hover {
+  filter: brightness(1.05);
+}

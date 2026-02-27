@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Chat UI</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <h1 class="title">AI Chat</h1>
+      </header>
+
+      <section class="chat">
+        <ul id="messageList" class="messages">
+          <li class="message message--bot">Hi! Ask me something.</li>
+        </ul>
+
+        <form id="chatForm" class="composer">
+          <input
+            id="messageInput"
+            class="composer__input"
+            type="text"
+            placeholder="Type your message..."
+            autocomplete="off"
+            required
+            
+          />
+          <button id="sendButton" class="composer__button" type="submit">
+            Send
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
