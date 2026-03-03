@@ -8,7 +8,6 @@
   </head>
 
   <body class="h-screen flex bg-gray-100">
-    <!-- Sidebar (hidden on small screens) -->
     <aside
       class="hidden md:flex w-64 flex-shrink-0 bg-gray-900 text-white flex-col"
     >
@@ -16,48 +15,48 @@
         <button
           class="w-full rounded-lg bg-blue-600 hover:bg-blue-500 px-3 py-2 font-semibold"
         >
-          + New Chat
+          + Create a new chat
         </button>
       </div>
 
       <nav class="flex-1 overflow-y-auto p-2 space-y-1">
-        <!-- Active conversation -->
         <a href="#" class="block px-3 py-2 rounded-lg bg-gray-700">
           Web App Dev
         </a>
-        <!-- Inactive conversations -->
         <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-700">
           Assignment A2
         </a>
         <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-700">
           Random Ideas
         </a>
+
+        <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-700">
+          Protein Tracking
+        </a>
+
       </nav>
     </aside>
 
-    <!-- Main chat area -->
     <main class="flex flex-col flex-1 bg-white">
-      <!-- Messages (scrollable) -->
       <div class="flex-1 overflow-y-auto p-6 space-y-4">
-        <!-- AI message (left) -->
+
         <chat-message role="ai">
-          Hi! This is a static chat UI prototype.
+          Hi! How can i help you?
         </chat-message>
-        <!-- User message (right) -->
+
         <chat-message role="user">
-          Nice. So the sidebar is on the left and chat is on the right?
+          To make sure, tell me sidebar is on the left and chat is on the right?
         </chat-message>
-        <!-- AI message (left) -->
+
         <chat-message role="ai">
           Exactly. Messages scroll, and the input stays pinned to the bottom.
         </chat-message>
-        <!-- User message (right) -->
+
         <chat-message role="user">
-          Great — the Send button does not need to work yet.
+          Thanks.
         </chat-message>
       </div>
 
-      <!-- Input bar (pinned to bottom) -->
       <div class="border-t bg-white p-4">
         <div class="flex gap-2 items-end max-w-3xl mx-auto">
           <textarea
@@ -74,13 +73,11 @@
       </div>
     </main>
 
-    <!-- Custom Element: chat-message -->
     <script>
       class ChatMessage extends HTMLElement {
         connectedCallback() {
           const role = this.getAttribute("role") || "ai";
           const align = role === "user" ? "justify-end" : "justify-start";
-
           const bubbleClasses =
             role === "user"
               ? "bg-blue-600 text-white"
@@ -95,7 +92,6 @@
           `;
         }
       }
-
       customElements.define("chat-message", ChatMessage);
     </script>
   </body>
