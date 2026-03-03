@@ -3,37 +3,100 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Chat UI</title>
-    <link rel="stylesheet" href="./style.css" />
+    <title>AI Chat - Static UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <main class="app">
-      <header class="header">
-        <h1 class="title">AI Chat</h1>
-      </header>
 
-      <section class="chat">
-        <ul id="messageList" class="messages">
-          <li class="message message--bot">Hi! Ask me something.</li>
-        </ul>
+  <body class="h-screen flex bg-gray-100">
+    <!-- Sidebar (hidden on small screens) -->
+    <aside
+      class="hidden md:flex w-64 flex-shrink-0 bg-gray-900 text-white flex-col"
+    >
+      <div class="p-4 border-b border-gray-700">
+        <button
+          class="w-full rounded-lg bg-blue-600 hover:bg-blue-500 px-3 py-2 font-semibold"
+        >
+          + New Chat
+        </button>
+      </div>
 
-        <form id="chatForm" class="composer">
-          <input
-            id="messageInput"
-            class="composer__input"
-            type="text"
-            placeholder="Type your message..."
-            autocomplete="off"
-            required
-            
-          />
-          <button id="sendButton" class="composer__button" type="submit">
+      <nav class="flex-1 overflow-y-auto p-2 space-y-1">
+        <!-- Active conversation -->
+        <a href="#" class="block px-3 py-2 rounded-lg bg-gray-700">
+          Web App Dev
+        </a>
+        <!-- Inactive conversations -->
+        <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-700">
+          Assignment A2
+        </a>
+        <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-700">
+          Random Ideas
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main chat area -->
+    <main class="flex flex-col flex-1 bg-white">
+      <!-- Messages (scrollable) -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-4">
+        <!-- AI message (left) -->
+        <chat-message role="ai">
+          Hi! This is a static chat UI prototype.
+        </chat-message>
+        <!-- User message (right) -->
+        <chat-message role="user">
+          Nice. So the sidebar is on the left and chat is on the right?
+        </chat-message>
+        <!-- AI message (left) -->
+        <chat-message role="ai">
+          Exactly. Messages scroll, and the input stays pinned to the bottom.
+        </chat-message>
+        <!-- User message (right) -->
+        <chat-message role="user">
+          Great — the Send button does not need to work yet.
+        </chat-message>
+      </div>
+
+      <!-- Input bar (pinned to bottom) -->
+      <div class="border-t bg-white p-4">
+        <div class="flex gap-2 items-end max-w-3xl mx-auto">
+          <textarea
+            class="flex-1 resize-none rounded-xl border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows="1"
+            placeholder="Message AI..."
+          ></textarea>
+          <button
+            class="bg-blue-600 text-white rounded-xl px-4 py-2 flex-shrink-0 hover:bg-blue-500"
+          >
             Send
           </button>
-        </form>
-      </section>
+        </div>
+      </div>
     </main>
 
-    <script src="./script.js"></script>
+    <!-- Custom Element: chat-message -->
+    <script>
+      class ChatMessage extends HTMLElement {
+        connectedCallback() {
+          const role = this.getAttribute("role") || "ai";
+          const align = role === "user" ? "justify-end" : "justify-start";
+
+          const bubbleClasses =
+            role === "user"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-800 border border-gray-200";
+
+          this.innerHTML = `
+            <div class="flex ${align}">
+              <div class="${bubbleClasses} rounded-2xl px-4 py-2 max-w-[60%]">
+                ${this.textContent.trim()}
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      customElements.define("chat-message", ChatMessage);
+    </script>
   </body>
 </html>
