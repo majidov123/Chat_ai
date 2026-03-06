@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Chat - Static UI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js"></script>
   </head>
 
   <body class="h-screen flex bg-gray-100">
@@ -33,16 +34,12 @@
         <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-700">
           Protein Tracking
         </a>
-
       </nav>
     </aside>
 
     <main class="flex flex-col flex-1 bg-white">
       <div class="flex-1 overflow-y-auto p-6 space-y-4">
-
-        <chat-message role="ai">
-          Hi! How can i help you?
-        </chat-message>
+        <chat-message role="ai"> Hi! How can i help you? </chat-message>
 
         <chat-message role="user">
           To make sure, tell me sidebar is on the left and chat is on the right?
@@ -52,9 +49,7 @@
           Exactly. Messages scroll, and the input stays pinned to the bottom.
         </chat-message>
 
-        <chat-message role="user">
-          Thanks.
-        </chat-message>
+        <chat-message role="user"> Thanks. </chat-message>
       </div>
 
       <div class="border-t bg-white p-4">
