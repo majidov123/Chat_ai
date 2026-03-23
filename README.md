@@ -1,16 +1,72 @@
-# React + Vite
+# Chat AI (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a React-based chat application built using Vite.
+It allows users to interact with an AI assistant using a structured chat interface with a sidebar and message panel.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Sidebar with multiple conversations
+- Chat panel with message history
+- AI responses using OpenRouter API
+- Loading indicator ("AI is typing...")
+- Modular component structure (Sidebar, ChatPanel, MessageBubble)
+- Mock API for conversations and messages
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `src/components/sidebar` → Sidebar UI
+- `src/components/chat` → Chat panel + messages
+- `src/api` → Mock API + LLM requests
+- `App.jsx` → Main state management
+
+---
+
+## Setup Instructions
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Add OpenRouter API Key (IMPORTANT)
+
+Create a file named `.env.local` in the root of the project:
+
+```bash
+VITE_OPENROUTER_API_KEY=YOUR_API_KEY_HERE
+```
+
+⚠️ Do NOT commit this file to GitHub.
+
+---
+
+### 3. Run the project
+
+```bash
+npm run dev
+```
+
+Then open:
+
+```
+http://localhost:5173
+```
+
+---
+
+## Notes
+
+- The API key must remain private and should not be pushed to GitHub.
+- The app uses a mock database for conversations and messages.
+- AI responses are fetched using OpenRouter.
+
+---
+
+## Bonus Feature
+
+A loading indicator ("AI is typing...") is displayed while waiting for the AI response.

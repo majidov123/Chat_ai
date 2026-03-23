@@ -25,3 +25,4 @@ dist-ssr
 *.sw?
 secrets.js
 .DS_Store
+.env.local
