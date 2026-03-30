@@ -1,72 +1,83 @@
-# Chat AI (React + Vite)
+# Assignment 5 – Chat Ai (Next.js)
 
-This project is a React-based chat application built using Vite.
-It allows users to interact with an AI assistant using a structured chat interface with a sidebar and message panel.
+This project is a continuation of Assignment 4, migrated from a client-side React (Vite) application to a full-stack application using Next.js.
 
----
+The goal of this assignment was to introduce server-side logic using Next.js API routes and improve the application structure.
 
 ## Features
 
-- Sidebar with multiple conversations
-- Chat panel with message history
-- AI responses using OpenRouter API
-- Loading indicator ("AI is typing...")
-- Modular component structure (Sidebar, ChatPanel, MessageBubble)
-- Mock API for conversations and messages
-
----
+- Sidebar with conversations
+- Chat interface with messages
+- Dynamic routing for conversations (`/conversations/[id]`)
+- Server-side API routes for:
+  - fetching conversations
+  - fetching messages
+  - sending messages
+  - AI responses
+- Environment variable handling with `.env.local`
 
 ## Project Structure
 
-- `src/components/sidebar` → Sidebar UI
-- `src/components/chat` → Chat panel + messages
-- `src/api` → Mock API + LLM requests
-- `App.jsx` → Main state management
+src/
+  app/
+    page.tsx
+    conversations/[id]/page.tsx
+    api/
+      conversations/route.ts
+      conversations/[id]/messages/route.ts
+      chat/route.ts
 
----
+  components/
+    sidebar/
+      Sidebar.tsx
+      ConversationItem.tsx
+    chat/
+      ChatPanel.tsx
+      MessageBubble.tsx
+      MessageInputForm.tsx
 
-## Setup Instructions
+  lib/
+    data.ts
 
-### 1. Install dependencies
+## Getting Started
 
-```bash
+Install dependencies:
+
 npm install
-```
 
-### 2. Add OpenRouter API Key (IMPORTANT)
+Run the development server:
 
-Create a file named `.env.local` in the root of the project:
-
-```bash
-VITE_OPENROUTER_API_KEY=YOUR_API_KEY_HERE
-```
-
-⚠️ Do NOT commit this file to GitHub.
-
----
-
-### 3. Run the project
-
-```bash
 npm run dev
-```
 
-Then open:
+Open the app in browser at:
 
-```
-http://localhost:5173
-```
+http://localhost:3000
 
----
+## Environment Variables
+
+Create a `.env.local` file in the root directory and add:
+
+OPENROUTER_API_KEY= api_key_here
+
+This key is used only on the server side and is not exposed to the browser.
+
+## Changes from Assignment 4
+
+- Migrated from Vite + React to Next.js with App Router
+- Moved API logic from client-side modules to server-side API routes
+- Implemented file-based routing
+- Improved component structure with smaller reusable components
+- Fixed `useEffect` dependencies to avoid unnecessary re-fetching
 
 ## Notes
 
-- The API key must remain private and should not be pushed to GitHub.
-- The app uses a mock database for conversations and messages.
-- AI responses are fetched using OpenRouter.
+- Data is stored in-memory in `data.ts`, so it resets when the server restarts
+- API routes were tested in the browser and in the Network tab
+- `.env.local` is ignored in `.gitignore`
 
----
+## Production Build
 
-## Bonus Feature
+To run the project in production mode:
 
-A loading indicator ("AI is typing...") is displayed while waiting for the AI response.
+npm run build
+npm run start
