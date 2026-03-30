@@ -19,25 +19,25 @@ The goal of this assignment was to introduce server-side logic using Next.js API
 ## Project Structure
 
 src/
-  app/
-    page.tsx
-    conversations/[id]/page.tsx
-    api/
-      conversations/route.ts
-      conversations/[id]/messages/route.ts
-      chat/route.ts
+app/
+page.tsx
+conversations/[id]/page.tsx
+api/
+conversations/route.ts
+conversations/[id]/messages/route.ts
+chat/route.ts
 
-  components/
-    sidebar/
-      Sidebar.tsx
-      ConversationItem.tsx
-    chat/
-      ChatPanel.tsx
-      MessageBubble.tsx
-      MessageInputForm.tsx
+components/
+sidebar/
+Sidebar.tsx
+ConversationItem.tsx
+chat/
+ChatPanel.tsx
+MessageBubble.tsx
+MessageInputForm.tsx
 
-  lib/
-    data.ts
+lib/
+data.ts
 
 ## Getting Started
 

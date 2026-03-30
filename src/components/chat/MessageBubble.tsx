@@ -3,10 +3,7 @@ type MessageBubbleProps = {
   content: string;
 };
 
-export default function MessageBubble({
-  role,
-  content,
-}: MessageBubbleProps) {
+export default function MessageBubble({ role, content }: MessageBubbleProps) {
   const align = role === "user" ? "justify-end" : "justify-start";
   const bubbleClasses =
     role === "user"

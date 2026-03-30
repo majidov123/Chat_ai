@@ -14,9 +14,7 @@ type ConversationPageProps = {
   params: Promise<{ id: string }>;
 };
 
-export default function ConversationPage({
-  params,
-}: ConversationPageProps) {
+export default function ConversationPage({ params }: ConversationPageProps) {
   const [conversationId, setConversationId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -35,7 +33,9 @@ export default function ConversationPage({
     if (!conversationId) return;
 
     async function fetchMessages() {
-      const response = await fetch(`/api/conversations/${conversationId}/messages`);
+      const response = await fetch(
+        `/api/conversations/${conversationId}/messages`,
+      );
       const data = await response.json();
       setMessages(data);
     }
@@ -98,7 +98,8 @@ export default function ConversationPage({
           },
           body: JSON.stringify({
             role: "assistant",
-            content: aiData.content ?? `Error: ${aiData.error ?? "Unknown error"}`,
+            content:
+              aiData.content ?? `Error: ${aiData.error ?? "Unknown error"}`,
           }),
         },
       );
