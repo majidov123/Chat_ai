@@ -1,26 +1,40 @@
-# Assignment 5 – Chat Ai (Next.js)
+# Assignment 6 – Chat AI (Next.js + Prisma)
 
-This project is a continuation of Assignment 4, migrated from a client-side React (Vite) application to a full-stack application using Next.js.
-
-The goal of this assignment was to introduce server-side logic using Next.js API routes and improve the application structure.
+This project is a continuation of Assignment 5.
+The application has been extended with a proper database layer using Prisma, client-side data fetching with TanStack Query, and code quality enforcement via pre-commit hooks.
 
 ## Features
 
-- Sidebar with conversations
-- Chat interface with messages
+- Sidebar with conversations (create & delete)
+- Chat interface with persistent messages
 - Dynamic routing for conversations (`/conversations/[id]`)
 - Server-side API routes for:
   - fetching conversations
+  - creating conversations
+  - deleting conversations
   - fetching messages
   - sending messages
   - AI responses
-- Environment variable handling with `.env.local`
+- Persistent database using SQLite + Prisma
+- Client-side state management using TanStack Query
+- Code formatting and linting enforced via pre-commit hooks
+
+## Tech Stack
+
+- Next.js (App Router)
+- React
+- Prisma ORM
+- SQLite (local development)
+- TanStack Query
+- ESLint + Prettier
+- pre-commit (Python hooks)
 
 ## Project Structure
 
 src/
 app/
 page.tsx
+layout.tsx
 conversations/[id]/page.tsx
 api/
 conversations/route.ts
@@ -35,9 +49,35 @@ chat/
 ChatPanel.tsx
 MessageBubble.tsx
 MessageInputForm.tsx
+providers/
+QueryProvider.tsx
 
 lib/
-data.ts
+prisma.ts
+conversationsApi.ts
+messagesApi.ts
+
+prisma/
+schema.prisma
+migrations/
+
+.pre-commit-config.yaml
+
+## Database (Prisma)
+
+The application now uses Prisma with SQLite.
+
+- Database file: `dev.db` (local only, ignored in git)
+- Schema: `prisma/schema.prisma`
+- Migrations stored in `prisma/migrations/`
+
+### Run migrations:
+
+npx prisma migrate dev
+
+### Generate Prisma Client:
+
+npx prisma generate
 
 ## Getting Started
 
@@ -45,39 +85,58 @@ Install dependencies:
 
 npm install
 
-Run the development server:
+Run development server:
 
 npm run dev
 
-Open the app in browser at:
+Open:
 
 http://localhost:3000
 
 ## Environment Variables
 
-Create a `.env.local` file in the root directory and add:
+Create `.env.local`:
 
-OPENROUTER_API_KEY= api_key_here
+OPENROUTER_API_KEY=your_api_key_here
+DATABASE_URL="file:./dev.db"
 
-This key is used only on the server side and is not exposed to the browser.
+## Pre-commit Hooks
 
-## Changes from Assignment 4
+This project uses pre-commit to enforce code quality.
 
-- Migrated from Vite + React to Next.js with App Router
-- Moved API logic from client-side modules to server-side API routes
-- Implemented file-based routing
-- Improved component structure with smaller reusable components
-- Fixed `useEffect` dependencies to avoid unnecessary re-fetching
+### Install:
+
+pipx install pre-commit
+pre-commit install
+
+### Run manually:
+
+pre-commit run --all-files
+
+Hooks include:
+
+- end-of-file fixer
+- trailing whitespace removal
+- Prettier formatting check
+- ESLint
+
+## Changes from Assignment 5
+
+- Replaced in-memory storage (`data.ts`) with Prisma database
+- Added persistent conversations and messages
+- Introduced TanStack Query for client-side data fetching
+- Centralized database access in `lib/`
+- Removed client-side data handling logic
+- Added pre-commit hooks for formatting and linting
+- Improved overall project architecture
 
 ## Notes
 
-- Data is stored in-memory in `data.ts`, so it resets when the server restarts
-- API routes were tested in the browser and in the Network tab
-- `.env.local` is ignored in `.gitignore`
+- `dev.db` is a local database and is not committed
+- Data now persists across server restarts
+- Prisma migrations ensure reproducibility across environments
 
 ## Production Build
-
-To run the project in production mode:
 
 npm run build
 npm run start

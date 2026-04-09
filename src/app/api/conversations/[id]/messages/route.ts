@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { makeId, messagesDb } from "@/lib/data";
+import { prisma } from "@/lib/prisma";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -7,13 +7,25 @@ type Params = {
 
 export async function GET(_: NextRequest, { params }: Params) {
   const { id } = await params;
-  return NextResponse.json(messagesDb[id] ?? []);
+
+  const messages = await prisma.message.findMany({
+    where: {
+      conversationId: id,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  return NextResponse.json(messages);
 }
 
 export async function POST(request: NextRequest, { params }: Params) {
   const { id } = await params;
-  const body = await request.json();
-  const { role, content } = body;
+  const body = await request.json().catch(() => ({}));
+
+  const role = typeof body.role === "string" ? body.role : "";
+  const content = typeof body.content === "string" ? body.content.trim() : "";
 
   if (!role || !content) {
     return NextResponse.json(
@@ -22,14 +34,26 @@ export async function POST(request: NextRequest, { params }: Params) {
     );
   }
 
-  const newMessage = {
-    id: makeId(),
-    role,
-    content,
-  };
+  const conversation = await prisma.conversation.findUnique({
+    where: {
+      id,
+    },
+  });
 
-  messagesDb[id] = messagesDb[id] ?? [];
-  messagesDb[id].push(newMessage);
+  if (!conversation) {
+    return NextResponse.json(
+      { error: "conversation not found" },
+      { status: 404 },
+    );
+  }
 
-  return NextResponse.json(newMessage, { status: 201 });
+  const message = await prisma.message.create({
+    data: {
+      role,
+      content,
+      conversationId: id,
+    },
+  });
+
+  return NextResponse.json(message, { status: 201 });
 }

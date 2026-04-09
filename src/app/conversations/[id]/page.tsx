@@ -1,123 +1,89 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import Sidebar from "@/components/sidebar/Sidebar";
 import ChatPanel from "@/components/chat/ChatPanel";
+import {
+  createMessage,
+  fetchMessages,
+  requestAiReply,
+} from "@/lib/messagesApi";
+import { useState } from "react";
 
-type Message = {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-};
+export default function ConversationPage() {
+  const params = useParams<{ id: string }>();
+  const conversationId = params.id;
+  const queryClient = useQueryClient();
 
-type ConversationPageProps = {
-  params: Promise<{ id: string }>;
-};
-
-export default function ConversationPage({ params }: ConversationPageProps) {
-  const [conversationId, setConversationId] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    async function resolveParams() {
-      const resolvedParams = await params;
-      setConversationId(resolvedParams.id);
-    }
+  const { data: messages = [] } = useQuery({
+    queryKey: ["messages", conversationId],
+    queryFn: () => fetchMessages(conversationId),
+    enabled: !!conversationId,
+  });
 
-    resolveParams();
-  }, [params]);
+  const sendMessageMutation = useMutation({
+    mutationFn: async (text: string) => {
+      const trimmedText = text.trim();
 
-  useEffect(() => {
-    if (!conversationId) return;
+      if (!trimmedText) {
+        throw new Error("Message cannot be empty");
+      }
 
-    async function fetchMessages() {
-      const response = await fetch(
-        `/api/conversations/${conversationId}/messages`,
+      setLoading(true);
+
+      const userMessage = await createMessage(
+        conversationId,
+        "user",
+        trimmedText,
       );
-      const data = await response.json();
-      setMessages(data);
-    }
 
-    fetchMessages();
-  }, [conversationId]);
-
-  async function handleSend() {
-    const text = input.trim();
-    if (!text || loading || !conversationId) return;
-
-    setInput("");
-    setLoading(true);
-
-    const userResponse = await fetch(
-      `/api/conversations/${conversationId}/messages`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          role: "user",
-          content: text,
-        }),
-      },
-    );
-
-    const userMessage = await userResponse.json();
-    setMessages((prev) => [...prev, userMessage]);
-
-    try {
-      const historyForLlm = [
+      const historyForAi = [
         { role: "system", content: "You are a helpful assistant." },
         ...messages.map((message) => ({
           role: message.role,
           content: message.content,
         })),
-        { role: "user", content: text },
+        { role: "user", content: trimmedText },
       ];
 
-      const aiResponse = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: historyForLlm,
-        }),
-      });
+      const aiResponse = await requestAiReply(historyForAi);
 
-      const aiData = await aiResponse.json();
-
-      const assistantResponse = await fetch(
-        `/api/conversations/${conversationId}/messages`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            role: "assistant",
-            content:
-              aiData.content ?? `Error: ${aiData.error ?? "Unknown error"}`,
-          }),
-        },
+      const assistantMessage = await createMessage(
+        conversationId,
+        "assistant",
+        aiResponse.content,
       );
 
-      const assistantMessage = await assistantResponse.json();
-      setMessages((prev) => [...prev, assistantMessage]);
-    } finally {
+      return { userMessage, assistantMessage };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
+      setInput("");
+    },
+    onSettled: () => {
       setLoading(false);
+    },
+  });
+
+  function handleSend() {
+    if (!input.trim() || loading) {
+      return;
     }
+
+    sendMessageMutation.mutate(input);
   }
 
   return (
     <div className="h-screen flex bg-gray-100">
-      <Sidebar activeId={conversationId} />
+      <Sidebar />
       <ChatPanel
         messages={messages}
-        input={input}
         loading={loading}
+        input={input}
         onInputChange={setInput}
         onSend={handleSend}
       />
