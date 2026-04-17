@@ -1,142 +1,91 @@
-# Assignment 6 – Chat AI (Next.js + Prisma)
+# Chat AI Application (Assignment 7)
 
-This project is a continuation of Assignment 5.
-The application has been extended with a proper database layer using Prisma, client-side data fetching with TanStack Query, and code quality enforcement via pre-commit hooks.
+## Overview
+
+This project is a full-stack chat application built with Next.js (App Router) and the Vercel AI SDK.
+It allows users to create conversations, send messages, and receive AI-generated responses in real time.
+
+---
 
 ## Features
 
-- Sidebar with conversations (create & delete)
-- Chat interface with persistent messages
-- Dynamic routing for conversations (`/conversations/[id]`)
-- Server-side API routes for:
-  - fetching conversations
-  - creating conversations
-  - deleting conversations
-  - fetching messages
-  - sending messages
-  - AI responses
-- Persistent database using SQLite + Prisma
-- Client-side state management using TanStack Query
-- Code formatting and linting enforced via pre-commit hooks
+- Create and manage conversations
+- Send and receive messages
+- AI-powered responses using OpenRouter
+- Streaming responses via Vercel AI SDK
+- Persistent message storage using Prisma
+- Sidebar with conversation list
+- Chat UI with user and assistant messages
+
+---
 
 ## Tech Stack
 
-- Next.js (App Router)
-- React
-- Prisma ORM
-- SQLite (local development)
-- TanStack Query
-- ESLint + Prettier
-- pre-commit (Python hooks)
+- Frontend: Next.js (App Router), React
+- Backend: Next.js API Routes
+- AI Integration: Vercel AI SDK (`useChat`)
+- Model Provider: OpenRouter (GPT-4o-mini)
+- Database: Prisma + SQLite
+- State Management: React Query
+
+---
 
 ## Project Structure
 
 src/
 app/
-page.tsx
-layout.tsx
-conversations/[id]/page.tsx
 api/
-conversations/route.ts
-conversations/[id]/messages/route.ts
-chat/route.ts
-
+chat/route.ts # AI chat endpoint
+conversations/ # conversation + messages API
+conversations/[id]/ # chat page
 components/
-sidebar/
-Sidebar.tsx
-ConversationItem.tsx
-chat/
-ChatPanel.tsx
-MessageBubble.tsx
-MessageInputForm.tsx
-providers/
-QueryProvider.tsx
-
+chat/ # chat UI components
+sidebar/ # sidebar UI
 lib/
-prisma.ts
-conversationsApi.ts
-messagesApi.ts
+messagesApi.ts # frontend API calls
+db/ # database logic
 
-prisma/
-schema.prisma
-migrations/
+---
 
-.pre-commit-config.yaml
+## How It Works
 
-## Database (Prisma)
+1. User sends a message from the UI
+2. useChat sends request to /api/chat
+3. Backend calls OpenRouter API via Vercel AI SDK
+4. AI response is streamed back to frontend
+5. Messages are stored in the database
+6. UI updates in real time
 
-The application now uses Prisma with SQLite.
-
-- Database file: `dev.db` (local only, ignored in git)
-- Schema: `prisma/schema.prisma`
-- Migrations stored in `prisma/migrations/`
-
-### Run migrations:
-
-npx prisma migrate dev
-
-### Generate Prisma Client:
-
-npx prisma generate
-
-## Getting Started
-
-Install dependencies:
-
-npm install
-
-Run development server:
-
-npm run dev
-
-Open:
-
-http://localhost:3000
+---
 
 ## Environment Variables
 
-Create `.env.local`:
+Create a `.env.local` file in the root directory:
 
 OPENROUTER_API_KEY=your_api_key_here
-DATABASE_URL="file:./dev.db"
 
-## Pre-commit Hooks
+---
 
-This project uses pre-commit to enforce code quality.
+## Installation
 
-### Install:
+npm install
 
-pipx install pre-commit
-pre-commit install
+---
 
-### Run manually:
+## Run the App
 
-pre-commit run --all-files
+npm run dev
 
-Hooks include:
+Then open:
 
-- end-of-file fixer
-- trailing whitespace removal
-- Prettier formatting check
-- ESLint
+http://localhost:3000
 
-## Changes from Assignment 5
+---
 
-- Replaced in-memory storage (`data.ts`) with Prisma database
-- Added persistent conversations and messages
-- Introduced TanStack Query for client-side data fetching
-- Centralized database access in `lib/`
-- Removed client-side data handling logic
-- Added pre-commit hooks for formatting and linting
-- Improved overall project architecture
+## Known Limitations
 
-## Notes
+- Messages may not immediately appear after refresh due to client-side state hydration
+- Input field clearing behavior is basic (UX can be improved)
+- No authentication implemented
 
-- `dev.db` is a local database and is not committed
-- Data now persists across server restarts
-- Prisma migrations ensure reproducibility across environments
-
-## Production Build
-
-npm run build
-npm run start
+---

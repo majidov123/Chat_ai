@@ -1,7 +1,7 @@
 export type Conversation = {
   id: string;
   title: string;
-  createdAt: string;
+  createdAt: string | Date;
 };
 
 export async function fetchConversations(): Promise<Conversation[]> {

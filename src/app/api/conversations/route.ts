@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import {
+  getConversations,
+  createConversation,
+  deleteConversation,
+} from "@/lib/db/conversations";
 
 export async function GET() {
-  const conversations = await prisma.conversation.findMany({
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-
+  const conversations = await getConversations();
   return NextResponse.json(conversations);
 }
 
@@ -19,11 +18,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "title is required" }, { status: 400 });
   }
 
-  const conversation = await prisma.conversation.create({
-    data: {
-      title,
-    },
-  });
+  const conversation = await createConversation(title);
 
   return NextResponse.json(conversation, { status: 201 });
 }
@@ -39,11 +34,7 @@ export async function DELETE(request: NextRequest) {
     );
   }
 
-  await prisma.conversation.delete({
-    where: {
-      id,
-    },
-  });
+  await deleteConversation(id);
 
   return NextResponse.json({ success: true });
 }

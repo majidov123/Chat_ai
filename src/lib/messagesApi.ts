@@ -53,7 +53,19 @@ export async function requestAiReply(
   });
 
   if (!response.ok) {
-    throw new Error("Failed to get AI response");
+    const rawText = await response.text().catch(() => "");
+    let errorMessage = "Failed to get hAI response";
+
+    if (rawText) {
+      try {
+        const parsed = JSON.parse(rawText);
+        errorMessage = parsed.error || rawText;
+      } catch {
+        errorMessage = rawText;
+      }
+    }
+
+    throw new Error(errorMessage);
   }
 
   return response.json() as Promise<{ content: string }>;

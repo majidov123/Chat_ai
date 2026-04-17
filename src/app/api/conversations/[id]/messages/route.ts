@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import {
+  createMessage,
+  getConversationForMessages,
+  getMessagesByConversationId,
+} from "@/lib/db/messages";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -8,14 +12,7 @@ type Params = {
 export async function GET(_: NextRequest, { params }: Params) {
   const { id } = await params;
 
-  const messages = await prisma.message.findMany({
-    where: {
-      conversationId: id,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
+  const messages = await getMessagesByConversationId(id);
 
   return NextResponse.json(messages);
 }
@@ -34,11 +31,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     );
   }
 
-  const conversation = await prisma.conversation.findUnique({
-    where: {
-      id,
-    },
-  });
+  const conversation = await getConversationForMessages(id);
 
   if (!conversation) {
     return NextResponse.json(
@@ -47,13 +40,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     );
   }
 
-  const message = await prisma.message.create({
-    data: {
-      role,
-      content,
-      conversationId: id,
-    },
-  });
+  const message = await createMessage(id, role, content);
 
   return NextResponse.json(message, { status: 201 });
 }

@@ -1,43 +1,71 @@
-import { NextRequest, NextResponse } from "next/server";
-
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const MODEL = "openai/gpt-4o-mini";
+import { NextRequest } from "next/server";
+import { streamText, convertToModelMessages } from "ai";
+import { openrouter } from "@/lib/ai";
+import { createMessage } from "@/lib/db/messages";
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  try {
+    const body = await request.json();
 
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "Missing OPENROUTER_API_KEY in .env.local" },
-      { status: 500 },
-    );
+    const conversationId =
+      typeof body.conversationId === "string" ? body.conversationId : "";
+
+    const messages = Array.isArray(body.messages) ? body.messages : [];
+
+    if (!conversationId) {
+      return new Response("conversationId is required", { status: 400 });
+    }
+
+    if (!messages.length) {
+      return new Response("messages are required", { status: 400 });
+    }
+
+    const lastMessage = messages[messages.length - 1];
+
+    if (!lastMessage || lastMessage.role !== "user") {
+      return new Response("last message must be a user message", {
+        status: 400,
+      });
+    }
+
+    const userText = Array.isArray(lastMessage.parts)
+      ? lastMessage.parts
+          .filter((part: { type: string }) => part.type === "text")
+          .map((part: { text?: string }) => part.text ?? "")
+          .join("")
+      : "";
+
+    if (!userText.trim()) {
+      return new Response("last user message must contain text", {
+        status: 400,
+      });
+    }
+
+    await createMessage(conversationId, "user", userText);
+
+    const result = streamText({
+      model: openrouter("openai/gpt-4o-mini"),
+      messages: await convertToModelMessages(messages),
+    });
+
+    return result.toUIMessageStreamResponse({
+      onFinish: async ({ responseMessage }) => {
+        const text = responseMessage.parts
+          .filter((part) => part.type === "text")
+          .map((part) => part.text)
+          .join("");
+
+        if (text.trim()) {
+          await createMessage(conversationId, "assistant", text);
+        }
+      },
+      onError: (error) => {
+        console.error("UI stream error:", error);
+        return "Failed to connect to OpenRouter";
+      },
+    });
+  } catch (error) {
+    console.error("Chat route failed:", error);
+    return new Response("Failed to connect to OpenRouter", { status: 500 });
   }
-
-  const body = await request.json();
-  const { messages } = body;
-
-  const response = await fetch(OPENROUTER_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages,
-    }),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text().catch(() => "");
-    return NextResponse.json(
-      { error: `OpenRouter error ${response.status}: ${errText}` },
-      { status: 500 },
-    );
-  }
-
-  const json = await response.json();
-  const content = json?.choices?.[0]?.message?.content ?? "";
-
-  return NextResponse.json({ content });
 }
