@@ -1,4 +1,4 @@
-# Chat AI Application (Assignment 7)
+# Chat AI
 
 ## Overview
 

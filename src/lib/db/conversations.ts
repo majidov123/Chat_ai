@@ -1,4 +1,3 @@
-// src/lib/db/conversations.ts
 import { prisma } from "../prisma";
 
 export async function getConversations() {
