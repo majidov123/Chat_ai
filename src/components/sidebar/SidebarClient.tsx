@@ -52,33 +52,38 @@ export default function SidebarClient({ conversations }: SidebarClientProps) {
   }
 
   return (
-    <aside className="w-72 shrink-0 bg-slate-950 text-white flex flex-col border-r border-slate-800">
-      <div className="p-4 border-b border-slate-800">
+    <div className="flex h-full w-full flex-col overflow-hidden bg-slate-950 text-white">
+      <div className="shrink-0 border-b border-slate-800 p-3">
         <button
+          type="button"
           onClick={handleCreateConversation}
           disabled={createMutation.isPending}
-          className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold hover:bg-blue-500 disabled:opacity-50"
+          className="w-full rounded-xl bg-blue-600 px-4 py-3 text-base font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
         >
           + Create a new chat
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-2 space-y-2">
+      <div className="min-h-0 flex-1 overflow-y-auto p-2">
         {conversations.length === 0 ? (
-          <p className="px-3 py-2 text-slate-400">No conversations yet.</p>
+          <p className="px-3 py-4 text-sm text-slate-400">
+            No conversations yet.
+          </p>
         ) : (
-          conversations.map((conversation) => (
-            <ConversationItem
-              key={conversation.id}
-              conversation={conversation}
-              isActive={pathname === `/conversations/${conversation.id}`}
-              onClick={() => router.push(`/conversations/${conversation.id}`)}
-              onDelete={() => handleDeleteConversation(conversation.id)}
-              isDeleting={deleteMutation.isPending}
-            />
-          ))
+          <div className="flex flex-col gap-1">
+            {conversations.map((conversation) => (
+              <ConversationItem
+                key={conversation.id}
+                conversation={conversation}
+                isActive={pathname === `/conversations/${conversation.id}`}
+                onClick={() => router.push(`/conversations/${conversation.id}`)}
+                onDelete={() => handleDeleteConversation(conversation.id)}
+                isDeleting={deleteMutation.isPending}
+              />
+            ))}
+          </div>
         )}
-      </nav>
-    </aside>
+      </div>
+    </div>
   );
 }
