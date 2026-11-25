@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  push:
+    branches: [assignment-09]
   pull_request:
-    branches: [main]
+    branches: [assignment-09]
 
 jobs:
   checks:
